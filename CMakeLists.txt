@@ -17,6 +17,7 @@ target_sources(
   ${bare_lief}
   PRIVATE
     binding.cc
+    lib/handle.h
     lib/macho.h
     lib/elf.h
 )

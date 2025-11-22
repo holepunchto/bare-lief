@@ -23,8 +23,7 @@ bare_lief_elf_binary_parse(
   std::span<uint8_t> buffer
 ) {
   return std::make_shared<bare_lief_handle_t<ELF::Binary>>(
-    ELF::Parser::parse(std::vector(buffer.begin(), buffer.end())).release(),
-    true
+    ELF::Parser::parse(std::vector(buffer.begin(), buffer.end())).release()
   );
 }
 
@@ -59,14 +58,21 @@ static std::optional<std::shared_ptr<bare_lief_handle_t<ELF::DynamicEntry>>>
 bare_lief_elf_binary_get_dynamic_entry(
   js_env_t *env,
   js_receiver_t,
+  js_object_t self,
   std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
   int64_t tag
 ) {
+  int err;
+
   auto handle = binary->handle->get(ELF::DynamicEntry::TAG(tag));
 
   if (handle == nullptr) return std::nullopt;
 
-  return std::make_shared<bare_lief_handle_t<ELF::DynamicEntry>>(handle, false);
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::DynamicEntry>>(handle, std::move(owner));
 }
 
 static bool
@@ -87,7 +93,7 @@ bare_lief_elf_dynamic_shared_object_create(
 ) {
   auto handle = new ELF::DynamicSharedObject(name);
 
-  return std::make_shared<bare_lief_handle_t<ELF::DynamicSharedObject>>(handle, true);
+  return std::make_shared<bare_lief_handle_t<ELF::DynamicSharedObject>>(handle);
 }
 
 static std::string
