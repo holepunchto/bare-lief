@@ -31,10 +31,22 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("elfBinaryParse", bare_lief_elf_binary_parse)
   V("elfBinaryWrite", bare_lief_elf_binary_write)
   V("elfBinaryGetRaw", bare_lief_elf_binary_get_raw)
+  V("elfBinaryAddDynamicEntry", bare_lief_elf_binary_add_dynamic_entry)
   V("elfBinaryGetDynamicEntry", bare_lief_elf_binary_get_dynamic_entry)
   V("elfBinaryHasDynamicEntry", bare_lief_elf_binary_has_dynamic_entry)
+  V("elfBinaryAddLibrary", bare_lief_elf_binary_add_library)
+  V("elfBinaryGetLibrary", bare_lief_elf_binary_get_library)
+  V("elfBinaryHasLibrary", bare_lief_elf_binary_has_library)
+  V("elfBinaryRemoveLibrary", bare_lief_elf_binary_remove_library)
   V("elfDynamicSharedObjectCreate", bare_lief_elf_dynamic_shared_object_create)
   V("elfDynamicSharedObjectGetName", bare_lief_elf_dynamic_shared_object_get_name)
+  V("elfDynamicSharedObjectSetName", bare_lief_elf_dynamic_shared_object_set_name)
+  V("elfDynamicEntryLibraryCreate", bare_lief_elf_dynamic_entry_library_create)
+  V("elfDynamicEntryLibraryGetName", bare_lief_elf_dynamic_entry_library_get_name)
+  V("elfDynamicEntryLibrarySetName", bare_lief_elf_dynamic_entry_library_set_name)
+  V("elfDynamicEntryRunPathCreate", bare_lief_elf_dynamic_entry_run_path_create)
+  V("elfDynamicEntryRunPathGetRunPath", bare_lief_elf_dynamic_entry_run_path_get_run_path)
+  V("elfDynamicEntryRunPathSetRunPath", bare_lief_elf_dynamic_entry_run_path_set_run_path)
 #undef V
 
 #define V(name, value) \

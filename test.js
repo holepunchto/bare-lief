@@ -59,5 +59,5 @@ test('ELF shared library', (t) => {
 
   const soname = binary.getDynamicEntry(SONAME)
 
-  t.comment(soname.asSharedObject())
+  t.comment(soname)
 })
