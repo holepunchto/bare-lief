@@ -55,7 +55,6 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
 
   V("ELF_DYNAMIC_ENTRY_NEEDED", ELF::DynamicEntry::TAG::NEEDED)
   V("ELF_DYNAMIC_ENTRY_SONAME", ELF::DynamicEntry::TAG::SONAME)
-  V("ELF_DYNAMIC_ENTRY_RPATH", ELF::DynamicEntry::TAG::RPATH)
   V("ELF_DYNAMIC_ENTRY_RUNPATH", ELF::DynamicEntry::TAG::RUNPATH)
 #undef V
 

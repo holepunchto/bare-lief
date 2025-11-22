@@ -10,6 +10,7 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <LIEF/BinaryStream/SpanStream.hpp>
 #include <LIEF/MachO.hpp>
 
 #include "handle.h"
@@ -22,8 +23,10 @@ bare_lief_macho_fat_binary_parse(
   js_receiver_t,
   std::span<uint8_t> buffer
 ) {
+  auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
+
   return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(
-    MachO::Parser::parse(std::vector(buffer.begin(), buffer.end())).release()
+    MachO::Parser::parse(std::move(stream)).release()
   );
 }
 

@@ -10,9 +10,9 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <LIEF/BinaryStream/SpanStream.hpp>
 #include <LIEF/ELF.hpp>
 
-#include "LIEF/ELF/DynamicEntry.hpp"
 #include "handle.h"
 
 using namespace LIEF;
@@ -23,8 +23,10 @@ bare_lief_elf_binary_parse(
   js_receiver_t,
   std::span<uint8_t> buffer
 ) {
+  auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
+
   return std::make_shared<bare_lief_handle_t<ELF::Binary>>(
-    ELF::Parser::parse(std::vector(buffer.begin(), buffer.end())).release()
+    ELF::Parser::parse(std::move(stream)).release()
   );
 }
 
