@@ -29,6 +29,22 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
 
   // ELF
   V("elfBinaryParse", bare_lief_elf_binary_parse)
+  V("elfBinaryWrite", bare_lief_elf_binary_write)
+  V("elfBinaryGetRaw", bare_lief_elf_binary_get_raw)
+  V("elfBinaryGetDynamicEntry", bare_lief_elf_binary_get_dynamic_entry)
+  V("elfBinaryHasDynamicEntry", bare_lief_elf_binary_has_dynamic_entry)
+  V("elfDynamicSharedObjectCreate", bare_lief_elf_dynamic_shared_object_create)
+  V("elfDynamicSharedObjectGetName", bare_lief_elf_dynamic_shared_object_get_name)
+#undef V
+
+#define V(name, value) \
+  err = js_set_property(env, exports, name, int64_t(value)); \
+  assert(err == 0);
+
+  V("ELF_DYNAMIC_ENTRY_NEEDED", ELF::DynamicEntry::TAG::NEEDED)
+  V("ELF_DYNAMIC_ENTRY_SONAME", ELF::DynamicEntry::TAG::SONAME)
+  V("ELF_DYNAMIC_ENTRY_RPATH", ELF::DynamicEntry::TAG::RPATH)
+  V("ELF_DYNAMIC_ENTRY_RUNPATH", ELF::DynamicEntry::TAG::RUNPATH)
 #undef V
 
   return exports;

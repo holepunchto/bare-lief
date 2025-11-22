@@ -1,6 +1,12 @@
 const test = require('brittle')
 const lief = require('.')
 
+const {
+  elf: {
+    dynamicEntry: { SONAME }
+  }
+} = lief.constants
+
 test('MachO executable', (t) => {
   const exe = require('./test/fixtures/executable/darwin-arm64/exe', {
     with: { type: 'binary' }
@@ -50,4 +56,8 @@ test('ELF shared library', (t) => {
 
   t.comment(binary)
   t.ok(binary)
+
+  const soname = binary.getDynamicEntry(SONAME)
+
+  t.comment(soname.asSharedObject())
 })

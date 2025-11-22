@@ -12,36 +12,42 @@
 
 #include <LIEF/MachO.hpp>
 
+#include "LIEF/MachO/SegmentCommand.hpp"
+#include "handle.h"
+
 using namespace LIEF;
 
-static std::shared_ptr<MachO::FatBinary>
+static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
 bare_lief_macho_fat_binary_parse(
   js_env_t *,
   js_receiver_t,
   std::span<uint8_t> buffer
 ) {
-  return MachO::Parser::parse(std::vector(buffer.begin(), buffer.end()));
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(
+    MachO::Parser::parse(std::vector(buffer.begin(), buffer.end())).release(),
+    false
+  );
 }
 
 static void
 bare_lief_macho_fat_binary_write(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<MachO::FatBinary> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>> binary,
   std::string path
 ) {
-  binary->write(path);
+  binary->handle->write(path);
 }
 
 static js_arraybuffer_t
 bare_lief_macho_fat_binary_get_raw(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<MachO::FatBinary> binary
+  std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>> binary
 ) {
   int err;
 
-  auto buffer = binary->raw();
+  auto buffer = binary->handle->raw();
 
   js_arraybuffer_t result;
   err = js_create_arraybuffer(env, buffer, result);
@@ -54,56 +60,64 @@ static int64_t
 bare_lief_marcho_fat_binary_get_size(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<MachO::FatBinary> binary
+  std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>> binary
 ) {
-  return binary->size();
+  return binary->handle->size();
 }
 
-static std::optional<MachO::Binary *>
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::Binary>>>
 bare_lief_macho_fat_binary_get_at(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<MachO::FatBinary> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>> binary,
   int64_t i
 ) {
-  return i < binary->size() ? std::optional(binary->at(i)) : std::nullopt;
+  auto handle = binary->handle->at(i);
+
+  if (handle == nullptr) return std::nullopt;
+
+  return std::make_shared<bare_lief_handle_t<MachO::Binary>>(handle, false);
 }
 
-static std::shared_ptr<MachO::Section>
+static std::shared_ptr<bare_lief_handle_t<MachO::Section>>
 bare_lief_macho_section_create(
   js_env_t *,
   js_receiver_t,
   std::string name,
   std::span<uint8_t> buffer
 ) {
-  return std::make_shared<MachO::Section>(name, std::vector(buffer.begin(), buffer.end()));
+  auto handle = new MachO::Section(name, std::vector(buffer.begin(), buffer.end()));
+
+  return std::make_shared<bare_lief_handle_t<MachO::Section>>(handle, true);
 }
 
-static std::shared_ptr<MachO::SegmentCommand>
+static std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>>
 bare_lief_macho_segment_command_create(
   js_env_t *,
   js_receiver_t,
   std::string name
 ) {
-  return std::make_shared<MachO::SegmentCommand>(name);
+  auto handle = new MachO::SegmentCommand(name);
+
+  return std::make_shared<bare_lief_handle_t<MachO::SegmentCommand>>(handle, true);
 }
 
 static void
 bare_lief_mecho_segment_command_add_section(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<MachO::SegmentCommand> segment,
-  std::shared_ptr<MachO::Section> section
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> segment,
+  std::shared_ptr<bare_lief_handle_t<MachO::Section>> section
 ) {
-  segment->add_section(*section);
+  segment->handle->add_section(*section->handle);
 }
 
 static void
 bare_lief_macho_binary_add_segment(
   js_env_t *,
   js_receiver_t,
-  MachO::Binary *binary,
-  std::shared_ptr<MachO::SegmentCommand> segment
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> segment
 ) {
-  binary->add(*segment);
+  binary->handle->add(*segment->handle);
 }
