@@ -40,6 +40,27 @@ bare_lief_macho_fat_binary_write(
   binary->handle->write(path);
 }
 
+static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
+bare_lief_macho_fat_binary_merge(
+  js_env_t *,
+  js_receiver_t,
+  std::vector<std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>> binaries
+) {
+  auto copy = std::vector<std::unique_ptr<MachO::Binary>>();
+
+  copy.reserve(binaries.size());
+
+  for (const auto &binary : binaries) {
+    while (auto next = binary->handle->pop_back()) {
+      copy.push_back(std::move(next));
+    }
+  }
+
+  auto handle = new MachO::FatBinary(std::move(copy));
+
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle);
+}
+
 static js_arraybuffer_t
 bare_lief_macho_fat_binary_get_raw(
   js_env_t *env,
@@ -87,6 +108,98 @@ bare_lief_macho_fat_binary_get_at(
   return std::make_shared<bare_lief_handle_t<MachO::Binary>>(handle, std::move(owner));
 }
 
+static void
+bare_lief_macho_binary_add_segment_command(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command
+) {
+  binary->handle->add(*command->handle);
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>>>
+bare_lief_macho_binary_get_load_command(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  int64_t type
+) {
+  int err;
+
+  auto handle = binary->handle->get(MachO::LoadCommand::TYPE(type));
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<MachO::LoadCommand>>(handle, std::move(owner));
+}
+
+static bool
+bare_lief_macho_binary_has_load_command(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  int64_t type
+) {
+  return binary->handle->has(MachO::LoadCommand::TYPE(type));
+}
+
+static bool
+bare_lief_macho_binary_remove_load_command(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>> command
+) {
+  return binary->handle->remove(*command->handle);
+}
+
+static void
+bare_lief_macho_binary_add_dylib_command(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>> command
+) {
+  binary->handle->add(*command->handle);
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>>>
+bare_lief_macho_binary_find_library(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::string name
+) {
+  int err;
+
+  auto handle = binary->handle->find_library(name);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<MachO::DylibCommand>>(handle, std::move(owner));
+}
+
+static void
+bare_lief_macho_binary_add_library(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::string name
+) {
+  binary->handle->add_library(name);
+}
+
 static std::shared_ptr<bare_lief_handle_t<MachO::Section>>
 bare_lief_macho_section_create(
   js_env_t *,
@@ -111,21 +224,74 @@ bare_lief_macho_segment_command_create(
 }
 
 static void
-bare_lief_mecho_segment_command_add_section(
+bare_lief_macho_segment_command_add_section(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> segment,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command,
   std::shared_ptr<bare_lief_handle_t<MachO::Section>> section
 ) {
-  segment->handle->add_section(*section->handle);
+  command->handle->add_section(*section->handle);
+}
+
+static std::span<const uint8_t>
+bare_lief_macho_load_command_get_data(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>> command
+) {
+  return command->handle->data();
 }
 
 static void
-bare_lief_macho_binary_add_segment(
+bare_lief_macho_load_command_set_data(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>> command,
+  std::span<uint8_t> data
+) {
+  command->handle->data(std::vector(data.begin(), data.end()));
+}
+
+static std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>>
+bare_lief_macho_dylib_command_create_id(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
-  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> segment
+  std::string name,
+  uint32_t timestamp,
+  uint32_t current_version,
+  uint32_t compat_version
 ) {
-  binary->handle->add(*segment->handle);
+  auto handle = new MachO::DylibCommand(MachO::DylibCommand::id_dylib(name, timestamp, current_version, compat_version));
+
+  return std::make_shared<bare_lief_handle_t<MachO::DylibCommand>>(handle);
+}
+
+static std::string
+bare_lief_macho_dylib_command_get_name(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>> command
+) {
+  return command->handle->name();
+}
+
+static void
+bare_lief_macho_dylib_command_set_name(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>> command,
+  std::string name
+) {
+  command->handle->name(name);
+}
+
+static std::shared_ptr<bare_lief_handle_t<MachO::RPathCommand>>
+bare_lief_macho_rpath_command_create(
+  js_env_t *,
+  js_receiver_t,
+  std::string path
+) {
+  auto handle = new MachO::RPathCommand(path);
+
+  return std::make_shared<bare_lief_handle_t<MachO::RPathCommand>>(handle);
 }

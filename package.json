@@ -18,7 +18,8 @@
     "binding.cc",
     "CMakeLists.txt",
     "lib",
-    "prebuilds"
+    "prebuilds",
+    "patches"
   ],
   "scripts": {
     "test": "prettier . --check && bare test.js"

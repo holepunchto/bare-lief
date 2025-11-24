@@ -16,16 +16,29 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   err = js_set_property<fn>(env, exports, name); \
   assert(err == 0);
 
-  // MachO
-  V("machOBinaryAddSegment", bare_lief_macho_binary_add_segment)
+  // Mach-O
   V("machOFatBinaryParse", bare_lief_macho_fat_binary_parse)
   V("machOFatBinaryWrite", bare_lief_macho_fat_binary_write)
+  V("machOFatBinaryMerge", bare_lief_macho_fat_binary_merge)
   V("machOFatBinaryGetRaw", bare_lief_macho_fat_binary_get_raw)
   V("machOFatBinaryGetSize", bare_lief_marcho_fat_binary_get_size)
   V("machOFatBinaryGetAt", bare_lief_macho_fat_binary_get_at)
+  V("machOBinaryAddSegmentCommand", bare_lief_macho_binary_add_segment_command)
+  V("machOBinaryGetLoadCommand", bare_lief_macho_binary_get_load_command)
+  V("machOBinaryHasLoadCommand", bare_lief_macho_binary_has_load_command)
+  V("machOBinaryRemoveLoadCommand", bare_lief_macho_binary_remove_load_command)
+  V("machOBinaryAddDylibCommand", bare_lief_macho_binary_add_dylib_command)
+  V("machOBinaryFindLibrary", bare_lief_macho_binary_find_library)
+  V("machOBinaryAddLibrary", bare_lief_macho_binary_add_library)
   V("machOSectionCreate", bare_lief_macho_section_create)
   V("machOSegmentCommandCreate", bare_lief_macho_segment_command_create)
-  V("machOSegmentCommandAddSection", bare_lief_mecho_segment_command_add_section)
+  V("machOSegmentCommandAddSection", bare_lief_macho_segment_command_add_section)
+  V("machOLoadCommandGetData", bare_lief_macho_load_command_get_data)
+  V("machOLoadCommandSetData", bare_lief_macho_load_command_set_data)
+  V("machODylibCommandCreateID", bare_lief_macho_dylib_command_create_id)
+  V("machODylibCommandGetName", bare_lief_macho_dylib_command_get_name)
+  V("machODylibCommandSetName", bare_lief_macho_dylib_command_set_name)
+  V("machORPathCommandCreate", bare_lief_macho_rpath_command_create)
 
   // ELF
   V("elfBinaryParse", bare_lief_elf_binary_parse)
@@ -53,6 +66,11 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   err = js_set_property(env, exports, name, int64_t(value)); \
   assert(err == 0);
 
+  // Mach-O
+  V("MACHO_LOAD_COMMAND_ID_DYLIB", MachO::LoadCommand::TYPE::ID_DYLIB)
+  V("MACHO_LOAD_COMMAND_RPATH", MachO::LoadCommand::TYPE::RPATH)
+
+  // ELF
   V("ELF_DYNAMIC_ENTRY_NEEDED", ELF::DynamicEntry::TAG::NEEDED)
   V("ELF_DYNAMIC_ENTRY_SONAME", ELF::DynamicEntry::TAG::SONAME)
   V("ELF_DYNAMIC_ENTRY_RUNPATH", ELF::DynamicEntry::TAG::RUNPATH)

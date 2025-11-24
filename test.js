@@ -1,28 +1,32 @@
 const test = require('brittle')
-const lief = require('.')
+const { MachO, ELF, constants } = require('.')
 
 const {
+  macho: {
+    loadCommand: { ID_DYLIB }
+  },
   elf: {
     dynamicEntry: { SONAME }
   }
-} = lief.constants
+} = constants
 
 test('MachO executable', (t) => {
   const exe = require('./test/fixtures/executable/darwin-arm64/exe', {
     with: { type: 'binary' }
   })
 
-  const binary = new lief.MachO.FatBinary(exe)
+  const binary = new MachO.FatBinary(exe)
 
   t.comment(binary)
   t.ok(binary)
 
-  const section = new lief.MachO.Section('__data', Buffer.from('hello world'))
+  const section = new MachO.Section('__data', Buffer.from('hello world'))
 
-  const segment = new lief.MachO.SegmentCommand('__PAYLOAD')
+  const segment = new MachO.SegmentCommand('__PAYLOAD')
+
   segment.addSection(section)
 
-  binary.at(0).addSegment(segment)
+  binary.at(0).addSegmentCommand(segment)
 })
 
 test('MachO shared library', (t) => {
@@ -30,7 +34,7 @@ test('MachO shared library', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new lief.MachO.FatBinary(exe)
+  const binary = new MachO.FatBinary(exe)
 
   t.comment(binary)
   t.ok(binary)
@@ -41,7 +45,7 @@ test('ELF executable', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new lief.ELF.Binary(exe)
+  const binary = new ELF.Binary(exe)
 
   t.comment(binary)
   t.ok(binary)
@@ -52,7 +56,7 @@ test('ELF shared library', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new lief.ELF.Binary(lib)
+  const binary = new ELF.Binary(lib)
 
   t.comment(binary)
   t.ok(binary)
