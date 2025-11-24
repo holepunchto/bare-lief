@@ -7,7 +7,7 @@ find_package(cmake-npm REQUIRED PATHS node_modules/cmake-npm)
 
 project(bare_lief C CXX)
 
-fetch_package("github:holepunchto/libjstl#b785ee1")
+fetch_package("github:holepunchto/libjstl#295cb64")
 
 set(LIEF_USE_CCACHE OFF)
 
