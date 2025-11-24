@@ -233,6 +233,44 @@ bare_lief_macho_segment_command_create(
   return std::make_shared<bare_lief_handle_t<MachO::SegmentCommand>>(handle);
 }
 
+static uint32_t
+bare_lief_macho_segment_command_get_max_protection(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command
+) {
+  return command->handle->max_protection();
+}
+
+static void
+bare_lief_macho_segment_command_set_max_protection(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command,
+  uint32_t protection
+) {
+  command->handle->max_protection(protection);
+}
+
+static uint32_t
+bare_lief_macho_segment_command_get_initial_protection(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command
+) {
+  return command->handle->init_protection();
+}
+
+static void
+bare_lief_macho_segment_command_set_initial_protection(
+  js_env_t *,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command,
+  uint32_t protection
+) {
+  command->handle->init_protection(protection);
+}
+
 static void
 bare_lief_macho_segment_command_add_section(
   js_env_t *,

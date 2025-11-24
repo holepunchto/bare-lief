@@ -33,6 +33,10 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("machOBinaryAddLibrary", bare_lief_macho_binary_add_library)
   V("machOSectionCreate", bare_lief_macho_section_create)
   V("machOSegmentCommandCreate", bare_lief_macho_segment_command_create)
+  V("machOSegmentCommandGetMaxProtection", bare_lief_macho_segment_command_get_max_protection)
+  V("machOSegmentCommandSetMaxProtection", bare_lief_macho_segment_command_set_max_protection)
+  V("machOSegmentCommandGetInitialProtection", bare_lief_macho_segment_command_get_initial_protection)
+  V("machOSegmentCommandSetInitialProtection", bare_lief_macho_segment_command_set_initial_protection)
   V("machOSegmentCommandAddSection", bare_lief_macho_segment_command_add_section)
   V("machOLoadCommandGetData", bare_lief_macho_load_command_get_data)
   V("machOLoadCommandSetData", bare_lief_macho_load_command_set_data)
@@ -70,6 +74,9 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   // Mach-O
   V("MACHO_LOAD_COMMAND_ID_DYLIB", MachO::LoadCommand::TYPE::ID_DYLIB)
   V("MACHO_LOAD_COMMAND_RPATH", MachO::LoadCommand::TYPE::RPATH)
+  V("MACHO_SEGMENT_COMMAND_READ", MachO::SegmentCommand::VM_PROTECTIONS::READ)
+  V("MACHO_SEGMENT_COMMAND_WRITE", MachO::SegmentCommand::VM_PROTECTIONS::WRITE)
+  V("MACHO_SEGMENT_COMMAND_EXECUTE", MachO::SegmentCommand::VM_PROTECTIONS::EXECUTE)
 
   // ELF
   V("ELF_DYNAMIC_ENTRY_NEEDED", ELF::DynamicEntry::TAG::NEEDED)
