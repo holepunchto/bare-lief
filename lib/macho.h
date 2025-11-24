@@ -159,6 +159,16 @@ bare_lief_macho_binary_remove_load_command(
   return binary->handle->remove(*command->handle);
 }
 
+static bool
+bare_lief_macho_binary_remove_all_load_commands(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  int64_t type
+) {
+  return binary->handle->remove(MachO::LoadCommand::TYPE(type));
+}
+
 static void
 bare_lief_macho_binary_add_dylib_command(
   js_env_t *,
