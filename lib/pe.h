@@ -103,7 +103,6 @@ static int64_t
 bare_lief_pe_optional_header_get_subsystem(
   js_env_t *env,
   js_receiver_t,
-  js_object_t self,
   std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary
 ) {
   return int64_t(binary->handle->optional_header().subsystem());
@@ -113,7 +112,6 @@ static void
 bare_lief_pe_optional_header_set_subsystem(
   js_env_t *env,
   js_receiver_t,
-  js_object_t self,
   std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
   int64_t subsystem
 ) {
