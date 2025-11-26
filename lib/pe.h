@@ -99,6 +99,27 @@ bare_lief_pe_binary_get_section(
   return std::make_shared<bare_lief_handle_t<PE::Section>>(handle, std::move(owner));
 }
 
+static int64_t
+bare_lief_pe_optional_header_get_subsystem(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary
+) {
+  return int64_t(binary->handle->optional_header().subsystem());
+}
+
+static void
+bare_lief_pe_optional_header_set_subsystem(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
+  int64_t subsystem
+) {
+  binary->handle->optional_header().subsystem(PE::OptionalHeader::SUBSYSTEM(subsystem));
+}
+
 static std::shared_ptr<bare_lief_handle_t<PE::Section>>
 bare_lief_pe_section_create(
   js_env_t *env,

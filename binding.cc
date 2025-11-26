@@ -108,6 +108,9 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("peBinaryAddSection", bare_lief_pe_binary_add_section)
   V("peBinaryGetSection", bare_lief_pe_binary_get_section)
 
+  V("peOptionalHeaderGetSubsystem", bare_lief_pe_optional_header_get_subsystem)
+  V("peOptionalHeaderSetSubsystem", bare_lief_pe_optional_header_set_subsystem)
+
   V("peSectionCreate", bare_lief_pe_section_create)
   V("peSectionGetCharacteristics", bare_lief_pe_section_get_characteristics)
   V("peSectionSetCharacteristics", bare_lief_pe_section_set_characteristics)
@@ -153,6 +156,9 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("PE_SECTION_CHARACTERISTICS_MEM_EXECUTE", PE::Section::CHARACTERISTICS::MEM_EXECUTE)
   V("PE_SECTION_CHARACTERISTICS_MEM_READ", PE::Section::CHARACTERISTICS::MEM_READ)
   V("PE_SECTION_CHARACTERISTICS_MEM_WRITE", PE::Section::CHARACTERISTICS::MEM_WRITE)
+
+  V("PE_OPTIONAL_HEADER_SUBSYSTEM_WINDOWS_GUI", PE::OptionalHeader::SUBSYSTEM::WINDOWS_GUI)
+  V("PE_OPTIONAL_HEADER_SUBSYSTEM_WINDOWS_CUI", PE::OptionalHeader::SUBSYSTEM::WINDOWS_CUI)
 #undef V
 
   return exports;
