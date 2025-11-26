@@ -7,6 +7,7 @@
 
 #include "lib/elf.h"
 #include "lib/macho.h"
+#include "lib/pe.h"
 
 static js_value_t *
 bare_lief_exports(js_env_t *env, js_value_t *exports) {
@@ -98,6 +99,22 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("elfDynamicEntryRunPathCreate", bare_lief_elf_dynamic_entry_run_path_create)
   V("elfDynamicEntryRunPathGetRunPath", bare_lief_elf_dynamic_entry_run_path_get_run_path)
   V("elfDynamicEntryRunPathSetRunPath", bare_lief_elf_dynamic_entry_run_path_set_run_path)
+
+  // PE
+
+  V("peBinaryParse", bare_lief_pe_binary_parse)
+  V("peBinaryWrite", bare_lief_pe_binary_write)
+  V("peBinaryGetRaw", bare_lief_pe_binary_get_raw)
+  V("peBinaryAddSection", bare_lief_pe_binary_add_section)
+  V("peBinaryGetSection", bare_lief_pe_binary_get_section)
+
+  V("peSectionCreate", bare_lief_pe_section_create)
+  V("peSectionGetCharacteristics", bare_lief_pe_section_get_characteristics)
+  V("peSectionSetCharacteristics", bare_lief_pe_section_set_characteristics)
+  V("peSectionGetContent", bare_lief_pe_section_get_content)
+  V("peSectionSetContent", bare_lief_pe_section_set_content)
+  V("peSectionGetSize", bare_lief_pe_section_get_size)
+  V("peSectionSetSize", bare_lief_pe_section_set_size)
 #undef V
 
 #define V(name, value) \
@@ -126,6 +143,13 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("ELF_DYNAMIC_ENTRY_TAG_NEEDED", ELF::DynamicEntry::TAG::NEEDED)
   V("ELF_DYNAMIC_ENTRY_TAG_SONAME", ELF::DynamicEntry::TAG::SONAME)
   V("ELF_DYNAMIC_ENTRY_TAG_RUNPATH", ELF::DynamicEntry::TAG::RUNPATH)
+
+  // PE
+
+  V("PE_SECTION_CHARACTERISTICS_MEM_SHARED", PE::Section::CHARACTERISTICS::MEM_SHARED)
+  V("PE_SECTION_CHARACTERISTICS_MEM_EXECUTE", PE::Section::CHARACTERISTICS::MEM_EXECUTE)
+  V("PE_SECTION_CHARACTERISTICS_MEM_READ", PE::Section::CHARACTERISTICS::MEM_READ)
+  V("PE_SECTION_CHARACTERISTICS_MEM_WRITE", PE::Section::CHARACTERISTICS::MEM_WRITE)
 #undef V
 
   return exports;
