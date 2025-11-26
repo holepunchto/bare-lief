@@ -57,6 +57,67 @@ bare_lief_elf_binary_get_raw(
   return result;
 }
 
+static std::shared_ptr<bare_lief_handle_t<ELF::Section>>
+bare_lief_elf_binary_add_section(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  bool loaded
+) {
+  int err;
+
+  auto handle = binary->handle->add(*section->handle, loaded);
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Section>>(handle, std::move(owner));
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<ELF::Section>>>
+bare_lief_elf_binary_get_section(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::string name
+) {
+  int err;
+
+  auto handle = binary->handle->get_section(name);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Section>>(handle, std::move(owner));
+}
+
+static int64_t
+bare_lief_elf_binary_get_section_index(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::string name
+) {
+  return binary->handle->get_section_idx(name).value_or(-1);
+}
+
+static void
+bare_lief_elf_binary_add_dynamic_symbol(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  binary->handle->add_dynamic_symbol(*symbol->handle);
+}
+
 static void
 bare_lief_elf_binary_add_dynamic_entry(
   js_env_t *env,
@@ -147,6 +208,180 @@ bare_lief_elf_binary_remove_library(
   std::string name
 ) {
   binary->handle->remove_library(name);
+}
+
+static std::shared_ptr<bare_lief_handle_t<ELF::Section>>
+bare_lief_elf_section_create(
+  js_env_t *env,
+  js_receiver_t,
+  std::string name
+) {
+  auto handle = new ELF::Section(name);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Section>>(handle);
+}
+
+static int64_t
+bare_lief_elf_section_get_flags(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return section->handle->flags();
+}
+
+static void
+bare_lief_elf_section_set_flags(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  int64_t flags
+) {
+  section->handle->flags(flags);
+}
+
+static std::span<const uint8_t>
+bare_lief_elf_section_get_content(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return section->handle->content();
+}
+
+static void
+bare_lief_elf_section_set_content(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  std::span<uint8_t> content
+) {
+  section->handle->content(std::vector(content.begin(), content.end()));
+}
+
+static int64_t
+bare_lief_elf_section_get_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return section->handle->size();
+}
+
+static void
+bare_lief_elf_section_set_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  int64_t size
+) {
+  section->handle->size(size);
+}
+
+static int64_t
+bare_lief_elf_section_get_virtual_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return section->handle->virtual_address();
+}
+
+static void
+bare_lief_elf_section_set_virtual_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  int64_t address
+) {
+  section->handle->virtual_address(address);
+}
+
+static std::shared_ptr<bare_lief_handle_t<ELF::Symbol>>
+bare_lief_elf_symbol_create(
+  js_env_t *env,
+  js_receiver_t,
+  std::string name
+) {
+  auto handle = new ELF::Symbol(name);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Symbol>>(handle);
+}
+
+static std::string
+bare_lief_elf_symbol_get_name(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  return symbol->handle->name();
+}
+
+static void
+bare_lief_elf_symbol_set_name(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol,
+  std::string name
+) {
+  symbol->handle->name(name);
+}
+
+static int64_t
+bare_lief_elf_symbol_get_value(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  return symbol->handle->value();
+}
+
+static void
+bare_lief_elf_symbol_set_value(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol,
+  int64_t value
+) {
+  symbol->handle->value(value);
+}
+
+static int64_t
+bare_lief_elf_symbol_get_binding(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  return int64_t(symbol->handle->binding());
+}
+
+static void
+bare_lief_elf_symbol_set_binding(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol,
+  int64_t binding
+) {
+  symbol->handle->binding(ELF::Symbol::BINDING(binding));
+}
+
+static int32_t
+bare_lief_elf_symbol_get_section_index(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  return symbol->handle->shndx();
+}
+
+static void
+bare_lief_elf_symbol_set_section_index(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol,
+  int32_t index
+) {
+  symbol->handle->shndx(index);
 }
 
 static std::shared_ptr<bare_lief_handle_t<ELF::DynamicSharedObject>>

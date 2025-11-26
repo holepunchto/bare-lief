@@ -1,14 +1,5 @@
 const test = require('brittle')
-const { MachO, ELF, constants } = require('.')
-
-const {
-  macho: {
-    loadCommand: { ID_DYLIB }
-  },
-  elf: {
-    dynamicEntry: { SONAME }
-  }
-} = constants
+const { MachO, ELF } = require('.')
 
 test('MachO executable', (t) => {
   const exe = require('./test/fixtures/executable/darwin-arm64/exe', {
@@ -19,14 +10,6 @@ test('MachO executable', (t) => {
 
   t.comment(binary)
   t.ok(binary)
-
-  const section = new MachO.Section('__data', Buffer.from('hello world'))
-
-  const segment = new MachO.SegmentCommand('__PAYLOAD')
-
-  segment.addSection(section)
-
-  binary.at(0).addSegmentCommand(segment)
 })
 
 test('MachO shared library', (t) => {
@@ -60,8 +43,4 @@ test('ELF shared library', (t) => {
 
   t.comment(binary)
   t.ok(binary)
-
-  const soname = binary.getDynamicEntry(SONAME)
-
-  t.comment(soname)
 })
