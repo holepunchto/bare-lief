@@ -5,6 +5,8 @@
 #include <stddef.h>
 #include <stdint.h>
 
+#include <LIEF/logging.hpp>
+
 #include "lib/elf.h"
 #include "lib/macho.h"
 #include "lib/pe.h"
@@ -12,6 +14,8 @@
 static js_value_t *
 bare_lief_exports(js_env_t *env, js_value_t *exports) {
   int err;
+
+  LIEF::logging::disable();
 
 #define V(name, fn) \
   err = js_set_property<fn>(env, exports, name); \
@@ -64,6 +68,8 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("elfBinaryAddDynamicEntry", bare_lief_elf_binary_add_dynamic_entry)
   V("elfBinaryGetDynamicEntry", bare_lief_elf_binary_get_dynamic_entry)
   V("elfBinaryHasDynamicEntry", bare_lief_elf_binary_has_dynamic_entry)
+  V("elfBinaryRemoveDynamicEntry", bare_lief_elf_binary_remove_dynamic_entry)
+  V("elfBinaryRemoveAllDynamicEntries", bare_lief_elf_binary_remove_all_dynamic_entries)
   V("elfBinaryAddLibrary", bare_lief_elf_binary_add_library)
   V("elfBinaryGetLibrary", bare_lief_elf_binary_get_library)
   V("elfBinaryHasLibrary", bare_lief_elf_binary_has_library)

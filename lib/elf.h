@@ -160,6 +160,26 @@ bare_lief_elf_binary_has_dynamic_entry(
 }
 
 static void
+bare_lief_elf_binary_remove_dynamic_entry(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<ELF::DynamicEntry>> entry
+) {
+  binary->handle->remove(*entry->handle);
+}
+
+static void
+bare_lief_elf_binary_remove_all_dynamic_entries(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  int64_t tag
+) {
+  binary->handle->remove(ELF::DynamicEntry::TAG(tag));
+}
+
+static void
 bare_lief_elf_binary_add_library(
   js_env_t *env,
   js_receiver_t,
