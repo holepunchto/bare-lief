@@ -57,18 +57,41 @@ bare_lief_elf_binary_get_raw(
   return result;
 }
 
-static std::shared_ptr<bare_lief_handle_t<ELF::Section>>
+static std::shared_ptr<bare_lief_handle_t<ELF::Segment>>
+bare_lief_elf_binary_add_segment(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t base
+) {
+  int err;
+
+  auto handle = binary->handle->add(*segment->handle, base);
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Segment>>(handle, std::move(owner));
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<ELF::Section>>>
 bare_lief_elf_binary_add_section(
   js_env_t *env,
   js_receiver_t,
   js_object_t self,
   std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
   std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
-  bool loaded
+  bool loaded,
+  int64_t position
 ) {
   int err;
 
-  auto handle = binary->handle->add(*section->handle, loaded);
+  auto handle = binary->handle->add(*section->handle, loaded, ELF::Binary::SEC_INSERT_POS(position));
+
+  if (handle == nullptr) return std::nullopt;
 
   js_persistent_t<js_object_t> owner;
   err = js_create_reference(env, self, owner);
@@ -109,6 +132,37 @@ bare_lief_elf_binary_get_section_index(
 }
 
 static void
+bare_lief_elf_binary_add_symtab_symbol(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  binary->handle->add_symtab_symbol(*symbol->handle);
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<ELF::Symbol>>>
+bare_lief_elf_binary_get_symtab_symbol(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::string name
+) {
+  int err;
+
+  auto handle = binary->handle->get_symtab_symbol(name);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Symbol>>(handle, std::move(owner));
+}
+
+static void
 bare_lief_elf_binary_add_dynamic_symbol(
   js_env_t *env,
   js_receiver_t,
@@ -116,6 +170,27 @@ bare_lief_elf_binary_add_dynamic_symbol(
   std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
 ) {
   binary->handle->add_dynamic_symbol(*symbol->handle);
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<ELF::Symbol>>>
+bare_lief_elf_binary_get_dynamic_symbol(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<ELF::Binary>> binary,
+  std::string name
+) {
+  int err;
+
+  auto handle = binary->handle->get_dynamic_symbol(name);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<ELF::Symbol>>(handle, std::move(owner));
 }
 
 static void
@@ -230,6 +305,168 @@ bare_lief_elf_binary_remove_library(
   binary->handle->remove_library(name);
 }
 
+static std::shared_ptr<bare_lief_handle_t<ELF::Segment>>
+bare_lief_elf_segment_create(
+  js_env_t *env,
+  js_receiver_t
+) {
+  auto handle = new ELF::Segment();
+
+  return std::make_shared<bare_lief_handle_t<ELF::Segment>>(handle);
+}
+
+static int64_t
+bare_lief_elf_segment_get_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return int64_t(segment->handle->type());
+}
+
+static void
+bare_lief_elf_segment_set_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t type
+) {
+  segment->handle->type(ELF::Segment::TYPE(type));
+}
+
+static int64_t
+bare_lief_elf_segment_get_flags(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return int64_t(segment->handle->flags());
+}
+
+static void
+bare_lief_elf_segment_set_flags(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t flags
+) {
+  segment->handle->flags(ELF::Segment::FLAGS(flags));
+}
+
+static int64_t
+bare_lief_elf_segment_get_alignment(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->alignment();
+}
+
+static void
+bare_lief_elf_segment_set_alignment(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t alignment
+) {
+  segment->handle->alignment(alignment);
+}
+
+static std::span<const uint8_t>
+bare_lief_elf_segment_get_content(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->content();
+}
+
+static void
+bare_lief_elf_segment_set_content(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  std::span<uint8_t> content
+) {
+  segment->handle->content(std::vector(content.begin(), content.end()));
+}
+
+static int64_t
+bare_lief_elf_segment_get_virtual_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->virtual_size();
+}
+
+static void
+bare_lief_elf_segment_set_virtual_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t size
+) {
+  segment->handle->virtual_size(size);
+}
+
+static int64_t
+bare_lief_elf_segment_get_physical_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->physical_size();
+}
+
+static void
+bare_lief_elf_segment_set_physical_size(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t size
+) {
+  segment->handle->physical_size(size);
+}
+
+static int64_t
+bare_lief_elf_segment_get_virtual_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->virtual_address();
+}
+
+static void
+bare_lief_elf_segment_set_virtual_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t address
+) {
+  segment->handle->virtual_address(address);
+}
+
+static int64_t
+bare_lief_elf_segment_get_physical_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment
+) {
+  return segment->handle->physical_address();
+}
+
+static void
+bare_lief_elf_segment_set_physical_address(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Segment>> segment,
+  int64_t address
+) {
+  segment->handle->physical_address(address);
+}
+
 static std::shared_ptr<bare_lief_handle_t<ELF::Section>>
 bare_lief_elf_section_create(
   js_env_t *env,
@@ -239,6 +476,25 @@ bare_lief_elf_section_create(
   auto handle = new ELF::Section(name);
 
   return std::make_shared<bare_lief_handle_t<ELF::Section>>(handle);
+}
+
+static int64_t
+bare_lief_elf_section_get_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return int64_t(section->handle->type());
+}
+
+static void
+bare_lief_elf_section_set_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  int64_t type
+) {
+  section->handle->type(ELF::Section::TYPE(type));
 }
 
 static int64_t
@@ -258,6 +514,25 @@ bare_lief_elf_section_set_flags(
   int64_t flags
 ) {
   section->handle->flags(flags);
+}
+
+static int64_t
+bare_lief_elf_section_get_alignment(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section
+) {
+  return section->handle->alignment();
+}
+
+static void
+bare_lief_elf_section_set_alignment(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Section>> section,
+  int64_t alignment
+) {
+  section->handle->alignment(alignment);
 }
 
 static std::span<const uint8_t>
@@ -324,6 +599,8 @@ bare_lief_elf_symbol_create(
   std::string name
 ) {
   auto handle = new ELF::Symbol(name);
+
+  handle->type(ELF::Symbol::TYPE::OBJECT);
 
   return std::make_shared<bare_lief_handle_t<ELF::Symbol>>(handle);
 }
