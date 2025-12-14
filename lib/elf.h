@@ -600,9 +600,26 @@ bare_lief_elf_symbol_create(
 ) {
   auto handle = new ELF::Symbol(name);
 
-  handle->type(ELF::Symbol::TYPE::OBJECT);
-
   return std::make_shared<bare_lief_handle_t<ELF::Symbol>>(handle);
+}
+
+static int64_t
+bare_lief_elf_symbol_get_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol
+) {
+  return int64_t(symbol->handle->type());
+}
+
+static void
+bare_lief_elf_symbol_set_type(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<ELF::Symbol>> symbol,
+  int64_t type
+) {
+  symbol->handle->type(ELF::Symbol::TYPE(type));
 }
 
 static std::string

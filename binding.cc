@@ -112,6 +112,8 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("elfSectionSetVirtualAddress", bare_lief_elf_section_set_virtual_address)
 
   V("elfSymbolCreate", bare_lief_elf_symbol_create)
+  V("elfSymbolGetType", bare_lief_elf_symbol_get_type)
+  V("elfSymbolSetType", bare_lief_elf_symbol_set_type)
   V("elfSymbolGetName", bare_lief_elf_symbol_get_name)
   V("elfSymbolSetName", bare_lief_elf_symbol_set_name)
   V("elfSymbolGetValue", bare_lief_elf_symbol_get_value)
@@ -180,6 +182,13 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("ELF_SECTION_FLAGS_WRITE", ELF::Section::FLAGS::WRITE)
   V("ELF_SECTION_FLAGS_ALLOC", ELF::Section::FLAGS::ALLOC)
   V("ELF_SECTION_FLAGS_EXECINSTR", ELF::Section::FLAGS::EXECINSTR)
+
+  V("ELF_SYMBOL_TYPE_OBJECT", ELF::Symbol::TYPE::OBJECT)
+  V("ELF_SYMBOL_TYPE_FUNC", ELF::Symbol::TYPE::FUNC)
+  V("ELF_SYMBOL_TYPE_SECTION", ELF::Symbol::TYPE::SECTION)
+  V("ELF_SYMBOL_TYPE_FILE", ELF::Symbol::TYPE::FILE)
+  V("ELF_SYMBOL_TYPE_COMMON", ELF::Symbol::TYPE::COMMON)
+  V("ELF_SYMBOL_TYPE_TLS", ELF::Symbol::TYPE::TLS)
 
   V("ELF_SYMBOL_BINDING_LOCAL", ELF::Symbol::BINDING::LOCAL)
   V("ELF_SYMBOL_BINDING_GLOBAL", ELF::Symbol::BINDING::GLOBAL)
