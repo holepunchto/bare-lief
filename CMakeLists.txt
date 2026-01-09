@@ -12,7 +12,7 @@ fetch_package("github:holepunchto/libjstl#295cb64")
 set(LIEF_USE_CCACHE OFF)
 
 fetch_package(
-  "github:lief-project/LIEF#0.17.1"
+  "github:lief-project/LIEF#0.17.2"
   PATCHES
     # https://github.com/lief-project/LIEF/issues/1271
     patches/01-public-macho-fat-binary-constructor.patch
