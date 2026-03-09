@@ -60,7 +60,7 @@ private:
     bare_lief_handle_state_t(T *handle, js_persistent_t<js_object_t> &&owner) : handle_(handle), owner_(std::move(owner)), refs_(1) {}
 
     ~bare_lief_handle_state_t() {
-      if (owner_.empty()) delete handle_;
+      if (handle_ && owner_.empty()) delete handle_;
     }
 
     T *handle_;
