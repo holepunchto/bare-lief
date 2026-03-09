@@ -23,15 +23,16 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
 
   // Mach-O
 
+  V("machOFatBinaryCreate", bare_lief_macho_fat_binary_create)
   V("machOFatBinaryParse", bare_lief_macho_fat_binary_parse)
   V("machOFatBinaryWrite", bare_lief_macho_fat_binary_write)
-  V("machOFatBinaryMerge", bare_lief_macho_fat_binary_merge)
   V("machOFatBinaryGetRaw", bare_lief_macho_fat_binary_get_raw)
   V("machOFatBinaryGetSize", bare_lief_marcho_fat_binary_get_size)
   V("machOFatBinaryGetAt", bare_lief_macho_fat_binary_get_at)
 
   V("machOBinaryAddSegmentCommand", bare_lief_macho_binary_add_segment_command)
   V("machOBinaryGetLoadCommand", bare_lief_macho_binary_get_load_command)
+  V("machOBinaryAddLoadCommand", bare_lief_macho_binary_add_load_command)
   V("machOBinaryHasLoadCommand", bare_lief_macho_binary_has_load_command)
   V("machOBinaryRemoveLoadCommand", bare_lief_macho_binary_remove_load_command)
   V("machOBinaryRemoveAllLoadCommands", bare_lief_macho_binary_remove_all_load_commands)
@@ -54,7 +55,10 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("machODylibCommandCreateID", bare_lief_macho_dylib_command_create_id)
   V("machODylibCommandGetName", bare_lief_macho_dylib_command_get_name)
   V("machODylibCommandSetName", bare_lief_macho_dylib_command_set_name)
+
   V("machORPathCommandCreate", bare_lief_macho_rpath_command_create)
+  V("machORPathCommandGetPath", bare_lief_macho_rpath_command_get_path)
+  V("machORPathCommandSetPath", bare_lief_macho_rpath_command_set_path)
 
   // ELF
 

@@ -18,6 +18,27 @@
 using namespace LIEF;
 
 static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
+bare_lief_macho_fat_binary_create(
+  js_env_t *,
+  js_receiver_t,
+  std::vector<std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>> binaries
+) {
+  auto copy = std::vector<std::unique_ptr<MachO::Binary>>();
+
+  copy.reserve(binaries.size());
+
+  for (const auto &binary : binaries) {
+    while (auto next = binary->handle->pop_back()) {
+      copy.push_back(std::move(next));
+    }
+  }
+
+  auto handle = new MachO::FatBinary(std::move(copy));
+
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle);
+}
+
+static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
 bare_lief_macho_fat_binary_parse(
   js_env_t *,
   js_receiver_t,
@@ -38,27 +59,6 @@ bare_lief_macho_fat_binary_write(
   std::string path
 ) {
   binary->handle->write(path);
-}
-
-static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
-bare_lief_macho_fat_binary_merge(
-  js_env_t *,
-  js_receiver_t,
-  std::vector<std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>> binaries
-) {
-  auto copy = std::vector<std::unique_ptr<MachO::Binary>>();
-
-  copy.reserve(binaries.size());
-
-  for (const auto &binary : binaries) {
-    while (auto next = binary->handle->pop_back()) {
-      copy.push_back(std::move(next));
-    }
-  }
-
-  auto handle = new MachO::FatBinary(std::move(copy));
-
-  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle);
 }
 
 static js_arraybuffer_t
@@ -108,14 +108,25 @@ bare_lief_macho_fat_binary_get_at(
   return std::make_shared<bare_lief_handle_t<MachO::Binary>>(handle, std::move(owner));
 }
 
-static void
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>>>
 bare_lief_macho_binary_add_segment_command(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
+  js_object_t self,
   std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
   std::shared_ptr<bare_lief_handle_t<MachO::SegmentCommand>> command
 ) {
-  binary->handle->add(*command->handle);
+  int err;
+
+  auto handle = binary->handle->add(*command->handle);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<MachO::LoadCommand>>(handle, std::move(owner));
 }
 
 static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>>>
@@ -129,6 +140,27 @@ bare_lief_macho_binary_get_load_command(
   int err;
 
   auto handle = binary->handle->get(MachO::LoadCommand::TYPE(type));
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<MachO::LoadCommand>>(handle, std::move(owner));
+}
+
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>>>
+bare_lief_macho_binary_add_load_command(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
+  std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>> command
+) {
+  int err;
+
+  auto handle = binary->handle->add(*command->handle);
 
   if (handle == nullptr) return std::nullopt;
 
@@ -169,14 +201,25 @@ bare_lief_macho_binary_remove_all_load_commands(
   return binary->handle->remove(MachO::LoadCommand::TYPE(type));
 }
 
-static void
+static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::LoadCommand>>>
 bare_lief_macho_binary_add_dylib_command(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
+  js_object_t self,
   std::shared_ptr<bare_lief_handle_t<MachO::Binary>> binary,
   std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>> command
 ) {
-  binary->handle->add(*command->handle);
+  int err;
+
+  auto handle = binary->handle->add(*command->handle);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return std::make_shared<bare_lief_handle_t<MachO::LoadCommand>>(handle, std::move(owner));
 }
 
 static std::optional<std::shared_ptr<bare_lief_handle_t<MachO::DylibCommand>>>
@@ -342,4 +385,23 @@ bare_lief_macho_rpath_command_create(
   auto handle = new MachO::RPathCommand(path);
 
   return std::make_shared<bare_lief_handle_t<MachO::RPathCommand>>(handle);
+}
+
+static std::string
+bare_lief_macho_rpath_command_get_path(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::RPathCommand>> command
+) {
+  return command->handle->path();
+}
+
+static void
+bare_lief_macho_rpath_command_set_path(
+  js_env_t *env,
+  js_receiver_t,
+  std::shared_ptr<bare_lief_handle_t<MachO::RPathCommand>> command,
+  std::string name
+) {
+  command->handle->path(name);
 }
