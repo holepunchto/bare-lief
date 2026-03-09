@@ -33,9 +33,9 @@ bare_lief_macho_fat_binary_create(
     }
   }
 
-  auto handle = new MachO::FatBinary(std::move(copy));
+  auto handle = MachO::FatBinary::create(std::move(copy));
 
-  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle);
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle.release());
 }
 
 static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
@@ -46,9 +46,9 @@ bare_lief_macho_fat_binary_parse(
 ) {
   auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
 
-  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(
-    MachO::Parser::parse(std::move(stream)).release()
-  );
+  auto handle = MachO::Parser::parse(std::move(stream));
+
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle.release());
 }
 
 static void

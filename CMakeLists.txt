@@ -7,16 +7,11 @@ find_package(cmake-npm REQUIRED PATHS node_modules/cmake-npm)
 
 project(bare_lief C CXX)
 
-fetch_package("github:holepunchto/libjstl#295cb64")
+fetch_package("github:holepunchto/libjstl#4e75590")
 
 set(LIEF_USE_CCACHE OFF)
 
-fetch_package(
-  "github:lief-project/LIEF#0.17.5"
-  PATCHES
-    # https://github.com/lief-project/LIEF/issues/1271
-    patches/01-public-macho-fat-binary-constructor.patch
-)
+fetch_package("github:lief-project/LIEF#14f941b")
 
 add_bare_module(bare_lief)
 
