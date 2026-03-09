@@ -18,7 +18,20 @@
 using namespace LIEF;
 
 static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
-bare_lief_macho_fat_binary_create(
+bare_lief_macho_fat_binary_parse(
+  js_env_t *,
+  js_receiver_t,
+  std::span<uint8_t> buffer
+) {
+  auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
+
+  auto handle = MachO::Parser::parse(std::move(stream));
+
+  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle.release());
+}
+
+static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
+bare_lief_macho_fat_binary_merge(
   js_env_t *,
   js_receiver_t,
   std::vector<std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>> binaries
@@ -34,19 +47,6 @@ bare_lief_macho_fat_binary_create(
   }
 
   auto handle = MachO::FatBinary::create(std::move(copy));
-
-  return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle.release());
-}
-
-static std::shared_ptr<bare_lief_handle_t<MachO::FatBinary>>
-bare_lief_macho_fat_binary_parse(
-  js_env_t *,
-  js_receiver_t,
-  std::span<uint8_t> buffer
-) {
-  auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
-
-  auto handle = MachO::Parser::parse(std::move(stream));
 
   return std::make_shared<bare_lief_handle_t<MachO::FatBinary>>(handle.release());
 }

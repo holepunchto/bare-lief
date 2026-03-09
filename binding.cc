@@ -23,8 +23,8 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
 
   // Mach-O
 
-  V("machOFatBinaryCreate", bare_lief_macho_fat_binary_create)
   V("machOFatBinaryParse", bare_lief_macho_fat_binary_parse)
+  V("machOFatBinaryMerge", bare_lief_macho_fat_binary_merge)
   V("machOFatBinaryWrite", bare_lief_macho_fat_binary_write)
   V("machOFatBinaryGetRaw", bare_lief_macho_fat_binary_get_raw)
   V("machOFatBinaryGetSize", bare_lief_marcho_fat_binary_get_size)
