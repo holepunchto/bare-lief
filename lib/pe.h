@@ -17,7 +17,7 @@
 
 using namespace LIEF;
 
-static std::shared_ptr<bare_lief_handle_t<PE::Binary>>
+static bare_lief_handle_t<PE::Binary>
 bare_lief_pe_binary_parse(
   js_env_t *,
   js_receiver_t,
@@ -25,30 +25,30 @@ bare_lief_pe_binary_parse(
 ) {
   auto stream = std::make_unique<LIEF::SpanStream>(buffer.data(), buffer.size());
 
-  return std::make_shared<bare_lief_handle_t<PE::Binary>>(
-    PE::Parser::parse(std::move(stream)).release()
-  );
+  auto handle = PE::Parser::parse(std::move(stream));
+
+  return bare_lief_handle_t<PE::Binary>(handle.release());
 }
 
 static void
 bare_lief_pe_binary_write(
   js_env_t *,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
+  bare_lief_handle_t<PE::Binary> binary,
   std::string path
 ) {
-  binary->handle->write(path);
+  binary->write(path);
 }
 
 static js_arraybuffer_t
 bare_lief_pe_binary_get_raw(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary
+  bare_lief_handle_t<PE::Binary> binary
 ) {
   int err;
 
-  auto builder = PE::Builder(*binary->handle, {});
+  auto builder = PE::Builder(*binary, {});
 
   builder.build();
 
@@ -59,36 +59,36 @@ bare_lief_pe_binary_get_raw(
   return result;
 }
 
-static std::shared_ptr<bare_lief_handle_t<PE::Section>>
+static bare_lief_handle_t<PE::Section>
 bare_lief_pe_binary_add_section(
   js_env_t *env,
   js_receiver_t,
   js_object_t self,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section
+  bare_lief_handle_t<PE::Binary> binary,
+  bare_lief_handle_t<PE::Section> section
 ) {
   int err;
 
-  auto handle = binary->handle->add_section(*section->handle);
+  auto handle = binary->add_section(*section);
 
   js_persistent_t<js_object_t> owner;
   err = js_create_reference(env, self, owner);
   assert(err == 0);
 
-  return std::make_shared<bare_lief_handle_t<PE::Section>>(handle, std::move(owner));
+  return bare_lief_handle_t<PE::Section>(handle, std::move(owner));
 }
 
-static std::optional<std::shared_ptr<bare_lief_handle_t<PE::Section>>>
+static std::optional<bare_lief_handle_t<PE::Section>>
 bare_lief_pe_binary_get_section(
   js_env_t *env,
   js_receiver_t,
   js_object_t self,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
+  bare_lief_handle_t<PE::Binary> binary,
   std::string name
 ) {
   int err;
 
-  auto handle = binary->handle->get_section(name);
+  auto handle = binary->get_section(name);
 
   if (handle == nullptr) return std::nullopt;
 
@@ -96,29 +96,29 @@ bare_lief_pe_binary_get_section(
   err = js_create_reference(env, self, owner);
   assert(err == 0);
 
-  return std::make_shared<bare_lief_handle_t<PE::Section>>(handle, std::move(owner));
+  return bare_lief_handle_t<PE::Section>(handle, std::move(owner));
 }
 
 static int64_t
 bare_lief_pe_optional_header_get_subsystem(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary
+  bare_lief_handle_t<PE::Binary> binary
 ) {
-  return int64_t(binary->handle->optional_header().subsystem());
+  return int64_t(binary->optional_header().subsystem());
 }
 
 static void
 bare_lief_pe_optional_header_set_subsystem(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Binary>> binary,
+  bare_lief_handle_t<PE::Binary> binary,
   int64_t subsystem
 ) {
-  binary->handle->optional_header().subsystem(PE::OptionalHeader::SUBSYSTEM(subsystem));
+  binary->optional_header().subsystem(PE::OptionalHeader::SUBSYSTEM(subsystem));
 }
 
-static std::shared_ptr<bare_lief_handle_t<PE::Section>>
+static bare_lief_handle_t<PE::Section>
 bare_lief_pe_section_create(
   js_env_t *env,
   js_receiver_t,
@@ -126,62 +126,62 @@ bare_lief_pe_section_create(
 ) {
   auto handle = new PE::Section(name);
 
-  return std::make_shared<bare_lief_handle_t<PE::Section>>(handle);
+  return bare_lief_handle_t<PE::Section>(handle);
 }
 
 static int64_t
 bare_lief_pe_section_get_characteristics(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section
+  bare_lief_handle_t<PE::Section> section
 ) {
-  return section->handle->characteristics();
+  return section->characteristics();
 }
 
 static void
 bare_lief_pe_section_set_characteristics(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section,
+  bare_lief_handle_t<PE::Section> section,
   int64_t characteristics
 ) {
-  section->handle->characteristics(characteristics);
+  section->characteristics(characteristics);
 }
 
 static std::span<const uint8_t>
 bare_lief_pe_section_get_content(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section
+  bare_lief_handle_t<PE::Section> section
 ) {
-  return section->handle->content();
+  return section->content();
 }
 
 static void
 bare_lief_pe_section_set_content(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section,
+  bare_lief_handle_t<PE::Section> section,
   std::span<uint8_t> content
 ) {
-  section->handle->content(std::vector(content.begin(), content.end()));
+  section->content(std::vector(content.begin(), content.end()));
 }
 
 static int64_t
 bare_lief_pe_section_get_size(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section
+  bare_lief_handle_t<PE::Section> section
 ) {
-  return section->handle->size();
+  return section->size();
 }
 
 static void
 bare_lief_pe_section_set_size(
   js_env_t *env,
   js_receiver_t,
-  std::shared_ptr<bare_lief_handle_t<PE::Section>> section,
+  bare_lief_handle_t<PE::Section> section,
   int64_t size
 ) {
-  section->handle->size(size);
+  section->size(size);
 }

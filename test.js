@@ -6,7 +6,7 @@ test('MachO executable', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new MachO.FatBinary(exe)
+  const binary = MachO.FatBinary.parse(exe)
 
   t.comment(binary)
   t.ok(binary)
@@ -17,7 +17,7 @@ test('MachO shared library', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new MachO.FatBinary(exe)
+  const binary = MachO.FatBinary.parse(exe)
 
   t.comment(binary)
   t.ok(binary)
@@ -28,7 +28,7 @@ test('ELF executable', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new ELF.Binary(exe)
+  const binary = ELF.Binary.parse(exe)
 
   t.comment(binary)
   t.ok(binary)
@@ -39,7 +39,7 @@ test('ELF shared library', (t) => {
     with: { type: 'binary' }
   })
 
-  const binary = new ELF.Binary(lib)
+  const binary = ELF.Binary.parse(lib)
 
   t.comment(binary)
   t.ok(binary)
