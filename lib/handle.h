@@ -53,7 +53,7 @@ struct bare_lief_handle_t {
 
 private:
   struct bare_lief_handle_state_t {
-    bare_lief_handle_state_t() : handle_(nullptr), owner_(), refs_(0) {}
+    bare_lief_handle_state_t() : handle_(nullptr), owner_(), refs_(1) {}
 
     explicit bare_lief_handle_state_t(T *handle) : handle_(handle), owner_(), refs_(1) {}
 
