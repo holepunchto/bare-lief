@@ -10,6 +10,10 @@
     "#binding": {
       "bare": "./lib/binding/bare.js",
       "node": "./lib/binding/node.js"
+    },
+    "assert": {
+      "bare": "bare-assert",
+      "default": "assert"
     }
   },
   "addon": true,
@@ -34,6 +38,7 @@
   },
   "homepage": "https://github.com/holepunchto/bare-lief#readme",
   "dependencies": {
+    "bare-assert": "^1.2.0",
     "require-addon": "^1.2.0"
   },
   "devDependencies": {
