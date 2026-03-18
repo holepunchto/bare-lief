@@ -11,7 +11,7 @@ fetch_package("github:holepunchto/libjstl#ecd945a")
 
 set(LIEF_USE_CCACHE OFF)
 
-fetch_package("github:lief-project/LIEF#14f941b")
+fetch_package("github:lief-project/LIEF#0.17.6")
 
 add_bare_module(bare_lief)
 
