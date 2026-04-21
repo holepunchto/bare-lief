@@ -25,7 +25,9 @@
     "prebuilds"
   ],
   "scripts": {
-    "test": "prettier . --check && bare test.js"
+    "format": "prettier --write . && lunte --fix",
+    "lint": "prettier --check . && lunte",
+    "test": "brittle-bare --coverage test.js"
   },
   "repository": {
     "type": "git",
@@ -48,6 +50,7 @@
     "cmake-fetch": "^1.4.0",
     "cmake-napi": "^1.2.2",
     "cmake-npm": "^1.1.0",
+    "lunte": "^1.6.0",
     "prettier": "^3.4.1",
     "prettier-config-holepunch": "^2.0.0"
   }
