@@ -261,6 +261,28 @@ bare_lief_macho_binary_find_library(
   return bare_lief_handle_t<MachO::DylibCommand>(handle, std::move(owner));
 }
 
+static std::vector<bare_lief_handle_t<MachO::DylibCommand>>
+bare_lief_macho_binary_get_libraries(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  bare_lief_handle_t<MachO::Binary> binary
+) {
+  int err;
+
+  auto result = std::vector<bare_lief_handle_t<MachO::DylibCommand>>();
+
+  for (auto &lib : binary->libraries()) {
+    js_persistent_t<js_object_t> owner;
+    err = js_create_reference(env, self, owner);
+    assert(err == 0);
+
+    result.push_back(bare_lief_handle_t<MachO::DylibCommand>(&lib, std::move(owner)));
+  }
+
+  return result;
+}
+
 static void
 bare_lief_macho_binary_add_library(
   js_env_t *env,

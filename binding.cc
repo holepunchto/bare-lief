@@ -38,6 +38,7 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("machOBinaryRemoveLoadCommand", bare_lief_macho_binary_remove_load_command)
   V("machOBinaryRemoveAllLoadCommands", bare_lief_macho_binary_remove_all_load_commands)
   V("machOBinaryAddDylibCommand", bare_lief_macho_binary_add_dylib_command)
+  V("machOBinaryGetLibraries", bare_lief_macho_binary_get_libraries)
   V("machOBinaryFindLibrary", bare_lief_macho_binary_find_library)
   V("machOBinaryAddLibrary", bare_lief_macho_binary_add_library)
 
