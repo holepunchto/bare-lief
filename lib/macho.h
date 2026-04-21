@@ -278,9 +278,9 @@ bare_lief_macho_section_create(
   std::string name,
   std::span<uint8_t> buffer
 ) {
-  auto handle = new MachO::Section(name, std::vector(buffer.begin(), buffer.end()));
+  auto handle = MachO::Section::create(name, std::vector(buffer.begin(), buffer.end()));
 
-  return bare_lief_handle_t<MachO::Section>(handle);
+  return bare_lief_handle_t<MachO::Section>(handle.release());
 }
 
 static bare_lief_handle_t<MachO::SegmentCommand>
