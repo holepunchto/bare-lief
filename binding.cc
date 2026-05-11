@@ -158,6 +158,8 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("peSectionSetContent", bare_lief_pe_section_set_content)
   V("peSectionGetSize", bare_lief_pe_section_get_size)
   V("peSectionSetSize", bare_lief_pe_section_set_size)
+  V("peSectionGetVirtualSize", bare_lief_pe_section_get_virtual_size)
+  V("peSectionSetVirtualSize", bare_lief_pe_section_set_virtual_size)
 #undef V
 
 #define V(name, value) \

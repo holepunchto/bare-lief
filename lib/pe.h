@@ -184,3 +184,22 @@ bare_lief_pe_section_set_size(
 ) {
   section->size(size);
 }
+
+static int64_t
+bare_lief_pe_section_get_virtual_size(
+  js_env_t *env,
+  js_receiver_t,
+  bare_lief_handle_t<PE::Section> section
+) {
+  return section->virtual_size();
+}
+
+static void
+bare_lief_pe_section_set_virtual_size(
+  js_env_t *env,
+  js_receiver_t,
+  bare_lief_handle_t<PE::Section> section,
+  int64_t size
+) {
+  section->virtual_size(size);
+}
