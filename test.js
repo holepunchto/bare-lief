@@ -38,6 +38,25 @@ test('MachO executable, merge arm64 and x64', (t) => {
   t.ok(binary)
 })
 
+test('MachO executable, add segment command', (t) => {
+  const exe = require('./test/fixtures/executable/darwin-arm64/exe', {
+    with: { type: 'binary' }
+  })
+
+  const fat = MachO.FatBinary.parse(exe)
+  const binary = fat.at(0)
+  const section = new MachO.Section('__bundle', Buffer.alloc(16, 0x41))
+  const segment = new MachO.SegmentCommand('__BARE')
+
+  segment.maxProtection = MachO.SegmentCommand.VM_PROTECTIONS.READ
+  segment.initialProtection = MachO.SegmentCommand.VM_PROTECTIONS.READ
+  segment.addSection(section)
+
+  binary.addSegmentCommand(segment)
+
+  t.ok(fat.toBuffer().byteLength > exe.byteLength)
+})
+
 test('MachO shared library, parse arm64', (t) => {
   const exe = require('./test/fixtures/shared-library/darwin-arm64/liblib.dylib', {
     with: { type: 'binary' }
