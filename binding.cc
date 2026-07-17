@@ -41,8 +41,10 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("machOBinaryGetLibraries", bare_lief_macho_binary_get_libraries)
   V("machOBinaryFindLibrary", bare_lief_macho_binary_find_library)
   V("machOBinaryAddLibrary", bare_lief_macho_binary_add_library)
+  V("machOBinaryGetSection", bare_lief_macho_binary_get_section)
 
   V("machOSectionCreate", bare_lief_macho_section_create)
+  V("machOSectionGetContent", bare_lief_macho_section_get_content)
 
   V("machOSegmentCommandCreate", bare_lief_macho_segment_command_create)
   V("machOSegmentCommandGetMaxProtection", bare_lief_macho_segment_command_get_max_protection)
