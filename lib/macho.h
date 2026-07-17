@@ -335,6 +335,24 @@ bare_lief_macho_section_get_content(
   return section->content();
 }
 
+static int64_t
+bare_lief_macho_section_get_offset(
+  js_env_t *,
+  js_receiver_t,
+  bare_lief_handle_t<MachO::Section> section
+) {
+  return section->offset();
+}
+
+static int64_t
+bare_lief_macho_section_get_size(
+  js_env_t *,
+  js_receiver_t,
+  bare_lief_handle_t<MachO::Section> section
+) {
+  return section->size();
+}
+
 static bare_lief_handle_t<MachO::SegmentCommand>
 bare_lief_macho_segment_command_create(
   js_env_t *,

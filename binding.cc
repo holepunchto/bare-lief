@@ -45,6 +45,8 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
 
   V("machOSectionCreate", bare_lief_macho_section_create)
   V("machOSectionGetContent", bare_lief_macho_section_get_content)
+  V("machOSectionGetOffset", bare_lief_macho_section_get_offset)
+  V("machOSectionGetSize", bare_lief_macho_section_get_size)
 
   V("machOSegmentCommandCreate", bare_lief_macho_segment_command_create)
   V("machOSegmentCommandGetMaxProtection", bare_lief_macho_segment_command_get_max_protection)
