@@ -293,6 +293,27 @@ bare_lief_macho_binary_add_library(
   binary->add_library(name);
 }
 
+static std::optional<bare_lief_handle_t<MachO::Section>>
+bare_lief_macho_binary_get_section(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  bare_lief_handle_t<MachO::Binary> binary,
+  std::string name
+) {
+  int err;
+
+  auto handle = binary->get_section(name);
+
+  if (handle == nullptr) return std::nullopt;
+
+  js_persistent_t<js_object_t> owner;
+  err = js_create_reference(env, self, owner);
+  assert(err == 0);
+
+  return bare_lief_handle_t<MachO::Section>(handle, std::move(owner));
+}
+
 static bare_lief_handle_t<MachO::Section>
 bare_lief_macho_section_create(
   js_env_t *,
@@ -303,6 +324,15 @@ bare_lief_macho_section_create(
   auto handle = MachO::Section::create(name, std::vector(buffer.begin(), buffer.end()));
 
   return bare_lief_handle_t<MachO::Section>(handle.release());
+}
+
+static std::span<const uint8_t>
+bare_lief_macho_section_get_content(
+  js_env_t *,
+  js_receiver_t,
+  bare_lief_handle_t<MachO::Section> section
+) {
+  return section->content();
 }
 
 static bare_lief_handle_t<MachO::SegmentCommand>
