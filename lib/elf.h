@@ -131,7 +131,7 @@ bare_lief_elf_binary_get_section_index(
 }
 
 static int64_t
-bare_lief_elf_binary_offset_from_virtual_address(
+bare_lief_elf_binary_virtual_address_to_offset(
   js_env_t *env,
   js_receiver_t,
   bare_lief_handle_t<ELF::Binary> binary,

@@ -73,7 +73,7 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("elfBinaryAddSection", bare_lief_elf_binary_add_section)
   V("elfBinaryGetSection", bare_lief_elf_binary_get_section)
   V("elfBinaryGetSectionIndex", bare_lief_elf_binary_get_section_index)
-  V("elfBinaryOffsetFromVirtualAddress", bare_lief_elf_binary_offset_from_virtual_address)
+  V("elfBinaryVirtualAddressToOffset", bare_lief_elf_binary_virtual_address_to_offset)
   V("elfBinaryAddSymtabSymbol", bare_lief_elf_binary_add_symtab_symbol)
   V("elfBinaryGetSymtabSymbol", bare_lief_elf_binary_get_symtab_symbol)
   V("elfBinaryAddDynamicSymbol", bare_lief_elf_binary_add_dynamic_symbol)
