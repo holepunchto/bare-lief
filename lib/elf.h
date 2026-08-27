@@ -130,6 +130,16 @@ bare_lief_elf_binary_get_section_index(
   return binary->get_section_idx(name).value_or(-1);
 }
 
+static int64_t
+bare_lief_elf_binary_virtual_address_to_offset(
+  js_env_t *env,
+  js_receiver_t,
+  bare_lief_handle_t<ELF::Binary> binary,
+  int64_t address
+) {
+  return binary->virtual_address_to_offset(address).value_or(-1);
+}
+
 static void
 bare_lief_elf_binary_add_symtab_symbol(
   js_env_t *env,
