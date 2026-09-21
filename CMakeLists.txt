@@ -7,11 +7,15 @@ find_package(cmake-npm REQUIRED PATHS node_modules/cmake-npm)
 
 project(bare_lief C CXX)
 
-fetch_package("github:holepunchto/libjstl#ecd945a")
+fetch_package("github:holepunchto/libjstl#7e31e67")
 
 set(LIEF_USE_CCACHE OFF)
 
-fetch_package("github:lief-project/LIEF#b1ac356")
+fetch_package(
+  "github:lief-project/LIEF#1.0.0"
+  PATCHES
+    patches/001-macho-align-string-table.patch
+)
 
 add_bare_module(bare_lief)
 
