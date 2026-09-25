@@ -15,6 +15,7 @@ fetch_package(
   "github:lief-project/LIEF#1.0.0"
   PATCHES
     patches/001-macho-align-string-table.patch
+    patches/002-elf-align-added-segment.patch
 )
 
 add_bare_module(bare_lief)

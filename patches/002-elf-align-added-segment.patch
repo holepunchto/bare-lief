@@ -1,0 +1,23 @@
+diff --git a/src/ELF/Binary.tcc b/src/ELF/Binary.tcc
+--- a/src/ELF/Binary.tcc
++++ b/src/ELF/Binary.tcc
+@@ -623,12 +623,13 @@ Segment* Binary::add_segment<Header::FILE_TYPE::DYN>(const Segment& segment,
+   new_segment->file_offset(last_offset_aligned);
+   if (base == 0) {
+     const uint64_t alignment = new_segment->alignment();
+-    const uint64_t next_va = next_virtual_address();
+-    uint64_t virtual_address =
+-        align_down(next_va, alignment) + new_segment->file_offset() % alignment;
+-    if (virtual_address < next_va) {
+-      virtual_address += alignment;
+-    }
++    // next_virtual_address() only rounds up to the default page size, which may
++    // be smaller than the alignment of the segment. Aligning to the latter keeps
++    // the new segment from sharing a page with the preceding segment, which the
++    // Android dynamic linker rejects on devices with 16 KB pages.
++    const uint64_t virtual_address =
++        align(next_virtual_address(), alignment) +
++        new_segment->file_offset() % alignment;
+     new_segment->virtual_address(virtual_address);
+   } else {
+     new_segment->virtual_address(new_segment->file_offset() + base);
