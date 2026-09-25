@@ -1,6 +1,6 @@
 {
   "name": "bare-lief",
-  "version": "0.2.8",
+  "version": "0.2.9",
   "description": "LIEF bindings for Bare",
   "exports": {
     "./package": "./package.json",
