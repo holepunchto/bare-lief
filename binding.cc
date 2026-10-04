@@ -152,6 +152,12 @@ bare_lief_exports(js_env_t *env, js_value_t *exports) {
   V("peBinaryGetRaw", bare_lief_pe_binary_get_raw)
   V("peBinaryAddSection", bare_lief_pe_binary_add_section)
   V("peBinaryGetSection", bare_lief_pe_binary_get_section)
+  V("peBinaryGetImports", bare_lief_pe_binary_get_imports)
+  V("peBinaryGetDelayImports", bare_lief_pe_binary_get_delay_imports)
+
+  V("peImportGetName", bare_lief_pe_import_get_name)
+
+  V("peDelayImportGetName", bare_lief_pe_delay_import_get_name)
 
   V("peOptionalHeaderGetSubsystem", bare_lief_pe_optional_header_get_subsystem)
   V("peOptionalHeaderSetSubsystem", bare_lief_pe_optional_header_set_subsystem)

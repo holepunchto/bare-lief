@@ -98,6 +98,68 @@ bare_lief_pe_binary_get_section(
   return bare_lief_handle_t<PE::Section>(handle, std::move(owner));
 }
 
+static std::vector<bare_lief_handle_t<PE::Import>>
+bare_lief_pe_binary_get_imports(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  bare_lief_handle_t<PE::Binary> binary
+) {
+  int err;
+
+  auto result = std::vector<bare_lief_handle_t<PE::Import>>();
+
+  for (auto &import : binary->imports()) {
+    js_persistent_t<js_object_t> owner;
+    err = js_create_reference(env, self, owner);
+    assert(err == 0);
+
+    result.push_back(bare_lief_handle_t<PE::Import>(&import, std::move(owner)));
+  }
+
+  return result;
+}
+
+static std::vector<bare_lief_handle_t<PE::DelayImport>>
+bare_lief_pe_binary_get_delay_imports(
+  js_env_t *env,
+  js_receiver_t,
+  js_object_t self,
+  bare_lief_handle_t<PE::Binary> binary
+) {
+  int err;
+
+  auto result = std::vector<bare_lief_handle_t<PE::DelayImport>>();
+
+  for (auto &import : binary->delay_imports()) {
+    js_persistent_t<js_object_t> owner;
+    err = js_create_reference(env, self, owner);
+    assert(err == 0);
+
+    result.push_back(bare_lief_handle_t<PE::DelayImport>(&import, std::move(owner)));
+  }
+
+  return result;
+}
+
+static std::string
+bare_lief_pe_import_get_name(
+  js_env_t *,
+  js_receiver_t,
+  bare_lief_handle_t<PE::Import> import
+) {
+  return import->name();
+}
+
+static std::string
+bare_lief_pe_delay_import_get_name(
+  js_env_t *,
+  js_receiver_t,
+  bare_lief_handle_t<PE::DelayImport> import
+) {
+  return import->name();
+}
+
 static int64_t
 bare_lief_pe_optional_header_get_subsystem(
   js_env_t *env,
