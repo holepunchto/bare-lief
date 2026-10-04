@@ -1,5 +1,5 @@
 const test = require('brittle')
-const { MachO, ELF } = require('.')
+const { MachO, ELF, PE } = require('.')
 
 test('MachO executable, parse arm64', (t) => {
   const exe = require('./test/fixtures/executable/darwin-arm64/exe', {
@@ -88,4 +88,30 @@ test('ELF shared library, parse arm64', (t) => {
 
   t.comment(binary)
   t.ok(binary)
+})
+
+test('PE delay-load library, imports', (t) => {
+  const lib = require('./test/fixtures/delay-load/win32-x64/lib.dll', {
+    with: { type: 'binary' }
+  })
+
+  const binary = PE.Binary.parse(lib)
+
+  t.alike(
+    [...binary.imports].map((entry) => entry.name),
+    ['KERNEL32.dll']
+  )
+})
+
+test('PE delay-load library, delay imports', (t) => {
+  const lib = require('./test/fixtures/delay-load/win32-x64/lib.dll', {
+    with: { type: 'binary' }
+  })
+
+  const binary = PE.Binary.parse(lib)
+
+  t.alike(
+    [...binary.delayImports].map((entry) => entry.name),
+    ['USER32.dll']
+  )
 })
