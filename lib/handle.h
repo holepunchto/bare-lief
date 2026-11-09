@@ -76,7 +76,7 @@ template <typename T>
 struct js_type_info_t<bare_lief_handle_t<T>> {
   using type = js_value_t *;
 
-  static constexpr auto signature = js_external;
+  static constexpr auto signature = js_object;
 
   template <js_type_options_t options>
   static auto
