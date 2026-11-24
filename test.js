@@ -79,6 +79,17 @@ test('ELF executable, parse arm64', (t) => {
   t.ok(binary)
 })
 
+test('ELF executable, strings with a NUL', (t) => {
+  const exe = require('./test/fixtures/executable/linux-arm64/exe', {
+    with: { type: 'binary' }
+  })
+
+  const binary = ELF.Binary.parse(exe)
+
+  t.exception.all(() => binary.addLibrary('libsafe.so\0.evil'), TypeError)
+  t.exception.all(() => binary.toDisk('out\0.txt'), TypeError)
+})
+
 test('ELF shared library, parse arm64', (t) => {
   const lib = require('./test/fixtures/shared-library/linux-arm64/liblib.so', {
     with: { type: 'binary' }

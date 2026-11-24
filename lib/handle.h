@@ -1,6 +1,19 @@
 #pragma once
 
+#include <string>
+
+#include <assert.h>
 #include <jstl.h>
+
+static inline void
+bare_lief__check_c_string(js_env_t *env, const std::string &value) {
+  if (value.find('\0') == std::string::npos) return;
+
+  int err = js_throw_type_error(env, NULL, "String must not contain null bytes");
+  assert(err == 0);
+
+  throw js_pending_exception;
+}
 
 template <typename T>
 struct bare_lief_handle_t {
