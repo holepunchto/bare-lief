@@ -31,11 +31,13 @@ bare_lief_elf_binary_parse(
 
 static void
 bare_lief_elf_binary_write(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   bare_lief_handle_t<ELF::Binary> binary,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   binary->write(path);
 }
 
@@ -107,6 +109,8 @@ bare_lief_elf_binary_get_section(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_section(name);
@@ -127,6 +131,8 @@ bare_lief_elf_binary_get_section_index(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   return binary->get_section_idx(name).value_or(-1);
 }
 
@@ -158,6 +164,8 @@ bare_lief_elf_binary_get_symtab_symbol(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_symtab_symbol(name);
@@ -189,6 +197,8 @@ bare_lief_elf_binary_get_dynamic_symbol(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_dynamic_symbol(name);
@@ -270,6 +280,8 @@ bare_lief_elf_binary_add_library(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   binary->add_library(name);
 }
 
@@ -281,6 +293,8 @@ bare_lief_elf_binary_get_library(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_library(name);
@@ -301,6 +315,8 @@ bare_lief_elf_binary_has_library(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   return binary->has_library(name);
 }
 
@@ -311,6 +327,8 @@ bare_lief_elf_binary_remove_library(
   bare_lief_handle_t<ELF::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   binary->remove_library(name);
 }
 
@@ -482,6 +500,8 @@ bare_lief_elf_section_create(
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new ELF::Section(name);
 
   return bare_lief_handle_t<ELF::Section>(handle);
@@ -607,6 +627,8 @@ bare_lief_elf_symbol_create(
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new ELF::Symbol(name);
 
   return bare_lief_handle_t<ELF::Symbol>(handle);
@@ -647,6 +669,8 @@ bare_lief_elf_symbol_set_name(
   bare_lief_handle_t<ELF::Symbol> symbol,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   symbol->name(name);
 }
 
@@ -713,6 +737,8 @@ bare_lief_elf_dynamic_shared_object_create(
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new ELF::DynamicSharedObject(name);
 
   return bare_lief_handle_t<ELF::DynamicSharedObject>(handle);
@@ -734,6 +760,8 @@ bare_lief_elf_dynamic_shared_object_set_name(
   bare_lief_handle_t<ELF::DynamicSharedObject> entry,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   entry->name(name);
 }
 
@@ -743,6 +771,8 @@ bare_lief_elf_dynamic_entry_library_create(
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new ELF::DynamicEntryLibrary(name);
 
   return bare_lief_handle_t<ELF::DynamicEntryLibrary>(handle);
@@ -764,6 +794,8 @@ bare_lief_elf_dynamic_entry_library_set_name(
   bare_lief_handle_t<ELF::DynamicEntryLibrary> entry,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   entry->name(name);
 }
 
@@ -773,6 +805,8 @@ bare_lief_elf_dynamic_entry_run_path_create(
   js_receiver_t,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   auto handle = new ELF::DynamicEntryRunPath(path);
 
   return bare_lief_handle_t<ELF::DynamicEntryRunPath>(handle);
@@ -794,5 +828,7 @@ bare_lief_elf_dynamic_entry_run_path_set_run_path(
   bare_lief_handle_t<ELF::DynamicEntryRunPath> entry,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   entry->runpath(path);
 }

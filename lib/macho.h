@@ -76,6 +76,8 @@ bare_lief_macho_fat_binary_write(
   bare_lief_handle_t<MachO::FatBinary> binary,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   binary->write(path);
 }
 
@@ -248,6 +250,8 @@ bare_lief_macho_binary_find_library(
   bare_lief_handle_t<MachO::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->find_library(name);
@@ -290,6 +294,8 @@ bare_lief_macho_binary_add_library(
   bare_lief_handle_t<MachO::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   binary->add_library(name);
 }
 
@@ -301,6 +307,8 @@ bare_lief_macho_binary_get_section(
   bare_lief_handle_t<MachO::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_section(name);
@@ -316,11 +324,13 @@ bare_lief_macho_binary_get_section(
 
 static bare_lief_handle_t<MachO::Section>
 bare_lief_macho_section_create(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   std::string name,
   std::span<uint8_t> buffer
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = MachO::Section::create(name, std::vector(buffer.begin(), buffer.end()));
 
   return bare_lief_handle_t<MachO::Section>(handle.release());
@@ -355,10 +365,12 @@ bare_lief_macho_section_get_size(
 
 static bare_lief_handle_t<MachO::SegmentCommand>
 bare_lief_macho_segment_command_create(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new MachO::SegmentCommand(name);
 
   return bare_lief_handle_t<MachO::SegmentCommand>(handle);
@@ -433,13 +445,15 @@ bare_lief_macho_load_command_set_data(
 
 static bare_lief_handle_t<MachO::DylibCommand>
 bare_lief_macho_dylib_command_create_id(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   std::string name,
   uint32_t timestamp,
   uint32_t current_version,
   uint32_t compat_version
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new MachO::DylibCommand(MachO::DylibCommand::id_dylib(name, timestamp, current_version, compat_version));
 
   return bare_lief_handle_t<MachO::DylibCommand>(handle);
@@ -461,15 +475,19 @@ bare_lief_macho_dylib_command_set_name(
   bare_lief_handle_t<MachO::DylibCommand> command,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   command->name(name);
 }
 
 static bare_lief_handle_t<MachO::RPathCommand>
 bare_lief_macho_rpath_command_create(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   auto handle = new MachO::RPathCommand(path);
 
   return bare_lief_handle_t<MachO::RPathCommand>(handle);
@@ -491,5 +509,7 @@ bare_lief_macho_rpath_command_set_path(
   bare_lief_handle_t<MachO::RPathCommand> command,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   command->path(name);
 }

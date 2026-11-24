@@ -31,11 +31,13 @@ bare_lief_pe_binary_parse(
 
 static void
 bare_lief_pe_binary_write(
-  js_env_t *,
+  js_env_t *env,
   js_receiver_t,
   bare_lief_handle_t<PE::Binary> binary,
   std::string path
 ) {
+  bare_lief__check_c_string(env, path);
+
   binary->write(path);
 }
 
@@ -85,6 +87,8 @@ bare_lief_pe_binary_get_section(
   bare_lief_handle_t<PE::Binary> binary,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   int err;
 
   auto handle = binary->get_section(name);
@@ -185,6 +189,8 @@ bare_lief_pe_section_create(
   js_receiver_t,
   std::string name
 ) {
+  bare_lief__check_c_string(env, name);
+
   auto handle = new PE::Section(name);
 
   return bare_lief_handle_t<PE::Section>(handle);
